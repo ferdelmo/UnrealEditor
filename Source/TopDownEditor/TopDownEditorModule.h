@@ -6,6 +6,7 @@
 #include "Modules/ModuleManager.h"
 #include "UnrealEd.h"
 #include "IAssetTypeActions.h"
+#include "HAL/IConsoleManager.h"
 
 
 class FTopDownEditorModule : public IModuleInterface {
@@ -15,7 +16,16 @@ public:
 
 	void ShutdownModule() override;
 
+	//DECLARE_DELEGATE_TwoParams("DoSpawn", const TArray<FString>&, UWorld*)
+	void CommandDoSpawn(const TArray<FString>& _arrParams, UWorld* _pWorld);
+
+	void CommandToolbar();
+
 private:
 
 	TSharedPtr<IAssetTypeActions> conversationActions;
+
+	TCHAR* commandName;
+
+	TSharedPtr<FExtender> extender;
 };
