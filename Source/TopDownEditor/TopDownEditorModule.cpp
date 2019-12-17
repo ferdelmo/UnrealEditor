@@ -12,19 +12,21 @@ void FTopDownEditorModule::StartupModule() {
 	FAssetToolsModule& oToolsModule = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools");
 	IAssetTools& oAssetToolsModule = oToolsModule.Get();
 
-	conversationActions = (TSharedPtr<IAssetTypeActions>)MakeShareable(((IAssetTypeActions *)new FConversationAssetActions()));
+	conversationActions = MakeShareable(new FConversationAssetActions());
 
 	oAssetToolsModule.RegisterAssetTypeActions(conversationActions.ToSharedRef());
 }
 
 void FTopDownEditorModule::ShutdownModule() {
 
-	FModuleManager::Get().IsModuleLoaded("AssetTools");
+	if (FModuleManager::Get().IsModuleLoaded("AssetTools")) {
 
-	IAssetTools& assetTools = FModuleManager::GetModuleChecked<FAssetToolsModule>(
-		"AssetTools").Get();
+		IAssetTools& assetTools = FModuleManager::GetModuleChecked<FAssetToolsModule>(
+			"AssetTools").Get();
 
-	assetTools.UnregisterAssetTypeActions(conversationActions.ToSharedRef());
+		assetTools.UnregisterAssetTypeActions(conversationActions.ToSharedRef());
+	}
+
 
 	conversationActions.Reset();
 }

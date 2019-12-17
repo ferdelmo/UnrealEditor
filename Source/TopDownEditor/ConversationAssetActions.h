@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Public/AssetTypeActions_Base.h"
+#include "Widgets/SWidget.h"
 
 /**
  * 
@@ -27,7 +28,10 @@ public:
 
 	bool HasActions(const TArray<UObject*>& InObjects) const override;
 
+	
 	void GetActions(const TArray<UObject*>& InObjects, FMenuBuilder& MenuBuilder) override;
 
 	void InvertConversationActionClicked();
+
+	TSharedPtr<SWidget> GetThumbnailOverlay(const FAssetData& AssetData) const override;
 };
