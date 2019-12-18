@@ -9,7 +9,7 @@
 #include "HAL/IConsoleManager.h"
 
 
-class FTopDownEditorModule : public IModuleInterface {
+class TOPDOWNEDITOR_API FTopDownEditorModule : public IModuleInterface {
 
 public:
 	void StartupModule() override;

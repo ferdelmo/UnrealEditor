@@ -8,6 +8,7 @@
 #include "TopDown/SpawnerActor.h"
 #include "HAL/ConsoleManager.h"
 #include "TopDownEditorCommands.h"
+#include "LevelEditor.h"
 
 IMPLEMENT_MODULE(FTopDownEditorModule, TopDownEditor)
 
@@ -34,15 +35,26 @@ void FTopDownEditorModule::StartupModule() {
 
 	FTopDownEditorCommands::Register();
 
-	FUICommandList* commandList = new FUICommandList();
+	TSharedPtr<FUICommandList> commandList = MakeShareable(new FUICommandList());
 
-	commandList->MapAction(FTopDownEditorCommands::Get().conversationWindowCommand,
+	commandList.Get()->MapAction(FTopDownEditorCommands::Get().conversationWindowCommand,
 		FExecuteAction::CreateRaw(this, &FTopDownEditorModule::CommandToolbar));
 
 	extender = MakeShareable(new FExtender());
-	TSharedPtr<FUICommandList> auxCommand = MakeShareable(new FUICommandList());
-	extender.Get()->AddToolBarExtension("TopDown", EExtensionHook::After, auxCommand,
-		);
+	
+
+	FToolBarBuilder toolBarBuilder(commandList, FMultiBoxCustomization::None,
+		extender);
+
+
+	extender.Get()->AddToolBarExtension("Content", EExtensionHook::Before, commandList,
+		FToolBarExtensionDelegate::CreateLambda([](FToolBarBuilder& toolBarBuilder) {
+				toolBarBuilder.AddToolBarButton(FTopDownEditorCommands::Get().conversationWindowCommand);
+			}
+	));
+
+	FLevelEditorModule& oLevelModule = FModuleManager::LoadModuleChecked<FLevelEditorModule>("LevelEditor");
+	oLevelModule.GetToolBarExtensibilityManager()->AddExtender(extender);
 
 }
 
@@ -78,5 +90,36 @@ void  FTopDownEditorModule::CommandDoSpawn(const TArray<FString>& _arrParams, UW
 }
 
 void FTopDownEditorModule::CommandToolbar() {
+	UE_LOG(LogTemp, Warning, TEXT("It Works!!!"));
+
+	TSharedRef<SWindow> window = SNew(SWindow)
+		.Title(FText::FromString("CONVERSATION WINDOW"))
+		.SizingRule(ESizingRule::UserSized)
+		.ClientSize(FVector2D(500,500));
+
+	window.Get().SetContent(SNew(SHorizontalBox)
+		+ SHorizontalBox::Slot().Padding(2, 5)
+		[
+
+			SNew(SVerticalBox)
+			/*+ SVerticalBox::Slot().VAlign(VAlign_Top)
+		[
+			SNew(STextBlock).Text(FText::FromString("Conversation")).AutoWrapText(true)
+			.Justification(ETextJustify::Center)
+		]*/
+		+SVerticalBox::Slot().VAlign(VAlign_Top)
+		[
+			SNew(STextBlock).Text(FText::FromString("CONVERSATION THINGS")).AutoWrapText(true)
+			.WrappingPolicy(ETextWrappingPolicy::AllowPerCharacterWrapping)
+		.Justification(ETextJustify::Center)
+		]
+		]
+		+ SHorizontalBox::Slot().Padding(2, 5)
+		[
+			SNew(SListView<UObject*>)
+		]);
+
+	//TSharedRef<SWindow> parent = FSlateApplication::Get().GetActiveModalWindow();
+	FSlateApplication::Get().AddWindow(window);
 
 }

@@ -3,7 +3,7 @@
 #pragma once
 #include "Framework/Commands/Commands.h"
 
-class FTopDownEditorCommands : public  TCommands<FTopDownEditorCommands> {
+class TOPDOWNEDITOR_API FTopDownEditorCommands : public  TCommands<FTopDownEditorCommands> {
 
 public:
 	FTopDownEditorCommands();
@@ -11,6 +11,4 @@ public:
 	virtual void RegisterCommands() override;
 
 	TSharedPtr<FUICommandInfo> conversationWindowCommand;
-
-	void DoStuff();
 };
