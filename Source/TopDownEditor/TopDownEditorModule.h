@@ -7,7 +7,7 @@
 #include "UnrealEd.h"
 #include "IAssetTypeActions.h"
 #include "HAL/IConsoleManager.h"
-
+#include "TopDown/ConversationAsset.h"
 
 class TOPDOWNEDITOR_API FTopDownEditorModule : public IModuleInterface {
 
@@ -28,4 +28,7 @@ private:
 	TCHAR* commandName;
 
 	TSharedPtr<FExtender> extender;
+
+	TArray<UConversationAsset*> _model;
+
 };
